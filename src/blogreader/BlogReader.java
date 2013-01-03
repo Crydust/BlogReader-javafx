@@ -12,6 +12,11 @@ import javafx.stage.Stage;
  */
 public class BlogReader extends Application {
     
+    /**
+     * 
+     * @param stage
+     * @throws Exception 
+     */
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(BlogReader.class.getResource("View.fxml"));

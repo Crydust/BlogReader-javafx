@@ -6,6 +6,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,7 +25,14 @@ public abstract class DocumentLoader {
     private DocumentLoader() {
     }
     
-    public static Document loadDocument(final String spec) {
+    /**
+     * Synchronously downloads an RSS feed and returns an XML Document.
+     * 
+     * @param spec URL for the RSS feed to download
+     * @return 
+     */
+    @Nullable
+    public static Document loadDocument(@Nonnull final String spec) {
         Document doc = null;
         InputStream in = null;
         try {

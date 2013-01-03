@@ -130,7 +130,7 @@ public class Controller implements Initializable {
                 if (doc != null) {
                     final String title = FeedParser.readTitle(doc);
                     final List<FeedItem> items = FeedParser.readItems(doc);
-                    if (title != null) {
+                    if (title != null && items != null) {
                         logger.log(Level.INFO, "Feed loaded and read");
                         model.titleProperty().set(title);
                         model.itemsProperty().addAll(items);
