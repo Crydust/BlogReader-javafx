@@ -14,7 +14,7 @@ public class BlogReader extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("View.fxml"));
+        Parent root = FXMLLoader.load(BlogReader.class.getResource("View.fxml"));
         
         Scene scene = new Scene(root);
         

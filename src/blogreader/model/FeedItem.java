@@ -15,7 +15,7 @@ public class FeedItem {
 
     public FeedItem(final String title, final Date pubDate, final String link, final String description) {
         this.title = title;
-        this.pubDate = pubDate;
+        this.pubDate = (Date) pubDate.clone();
         this.link = link;
         this.description = description;
     }
@@ -25,7 +25,7 @@ public class FeedItem {
     }
 
     public Date getPubDate() {
-        return pubDate;
+        return (Date) pubDate.clone();
     }
 
     public String getLink() {

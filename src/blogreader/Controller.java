@@ -2,9 +2,8 @@ package blogreader;
 
 import blogreader.model.FeedItem;
 import blogreader.model.Feed;
-import static blogreader.util.FeedLoader.loadDocument;
-import static blogreader.util.FeedLoader.readTitle;
-import static blogreader.util.FeedLoader.readItems;
+import blogreader.util.DocumentLoader;
+import blogreader.util.FeedParser;
 import com.sun.webpane.webkit.JSObject;
 import java.awt.Desktop;
 import java.io.IOException;
@@ -50,25 +49,25 @@ public class Controller implements Initializable {
     private static final String DATE_FORMAT = "dd/MM/yyyy";
     private static final String TITLE_PROPERTY_NAME = "title";
     private static final String WEBVIEW_TEMPLATE = ""
-            + "<style>\n"
-            + "body {\n"
-            + "    font-family: Arial, Helvetica, sans-serif;\n"
-            + "    font-size: 13px;\n"
-            + "    line-height: 1.4;\n"
-            + "}\n"
-            + "</style>\n"
-            + "<script>\n"
-            + "function init(){\n"
-            + "    var i, leni;\n"
-            + "    function _browse (e) {\n"
-            + "        e.preventDefault();\n"
-            + "        javaObj.browse(e.target.href);\n"
-            + "        return false;\n"
-            + "    }\n"
-            + "    for (i = 0, leni = document.links.length; i < leni; i += 1) {\n"
-            + "        document.links[i].addEventListener('click', _browse, false);\n"
-            + "    }\n"
-            + "}\n"
+            + "<style>%n"
+            + "body {%n"
+            + "    font-family: Arial, Helvetica, sans-serif;%n"
+            + "    font-size: 13px;%n"
+            + "    line-height: 1.4;%n"
+            + "}%n"
+            + "</style>%n"
+            + "<script>%n"
+            + "function init(){%n"
+            + "    var i, leni;%n"
+            + "    function _browse (e) {%n"
+            + "        e.preventDefault();%n"
+            + "        javaObj.browse(e.target.href);%n"
+            + "        return false;%n"
+            + "    }%n"
+            + "    for (i = 0, leni = document.links.length; i < leni; i += 1) {%n"
+            + "        document.links[i].addEventListener('click', _browse, false);%n"
+            + "    }%n"
+            + "}%n"
             + "</script>"
             + "%s";
     @FXML
@@ -99,13 +98,7 @@ public class Controller implements Initializable {
         TableColumn pubDateColumn = new TableColumn();
         pubDateColumn.setText(DATE_COLUMN_TEXT);
         pubDateColumn.setPrefWidth(200);
-        pubDateColumn.setCellValueFactory(new Callback<CellDataFeatures<FeedItem, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(CellDataFeatures<FeedItem, String> p) {
-                DateFormat df = new SimpleDateFormat(DATE_FORMAT);
-                return new SimpleStringProperty(df.format(p.getValue().getPubDate()));
-            }
-        });
+        pubDateColumn.setCellValueFactory(new PubDateValueFactory());
 
         itemsTableView.getColumns().add(titleColumn);
         itemsTableView.getColumns().add(pubDateColumn);
@@ -119,25 +112,14 @@ public class Controller implements Initializable {
         itemWebView.setContextMenuEnabled(false);
         final WebEngine webEngine = itemWebView.getEngine();
         webEngine.getLoadWorker().stateProperty().addListener(
-                new ChangeListener<Worker.State>() {
-            @Override
-            public void changed(ObservableValue<? extends State> p, State oldState, State newState) {
-                if (newState == Worker.State.SUCCEEDED) {
-                    // add a bridge from the javascript to the java world
-                    // run javascript init function
-                    JSObject win = (JSObject) webEngine.executeScript("window");
-                    win.setMember("javaObj", new Bridge());
-                    webEngine.executeScript("init()");
-                }
-            }
-        });
+                new WebEngineChangeListener(webEngine));
 
         // fetch data in the background
         logger.log(Level.INFO, "Begin loading feed");
         new Thread(new Task<Document>() {
             @Override
             protected Document call() throws Exception {
-                return loadDocument(FEED_URL);
+                return DocumentLoader.loadDocument(FEED_URL);
             }
 
             @Override
@@ -146,9 +128,9 @@ public class Controller implements Initializable {
                 model.itemsProperty().clear();
                 Document doc = this.getValue();
                 if (doc != null) {
-                    final String title = readTitle(doc);
-                    final List<FeedItem> items = readItems(doc);
-                    if (title != null || items != null) {
+                    final String title = FeedParser.readTitle(doc);
+                    final List<FeedItem> items = FeedParser.readItems(doc);
+                    if (title != null) {
                         logger.log(Level.INFO, "Feed loaded and read");
                         model.titleProperty().set(title);
                         model.itemsProperty().addAll(items);
@@ -233,6 +215,48 @@ public class Controller implements Initializable {
                 FeedItem oldValue, FeedItem newValue) {
             webView.getEngine().loadContent(String.format(WEBVIEW_TEMPLATE,
                     newValue.getDescription()));
+        }
+    }
+
+
+    /**
+     * Retrieves and formats the pubDate.
+     */
+    private static class PubDateValueFactory implements Callback<CellDataFeatures<FeedItem, String>, ObservableValue<String>> {
+
+        public PubDateValueFactory() {
+        }
+
+        @Override
+        public ObservableValue<String> call(CellDataFeatures<FeedItem, String> p) {
+            DateFormat df = new SimpleDateFormat(DATE_FORMAT);
+            return new SimpleStringProperty(df.format(p.getValue().getPubDate()));
+        }
+    }
+
+    /**
+     * Listens to changes in webengine state and each time a page is loaded:
+     * 
+     * <ul>
+     * <li>Add a bridge from the javascript to the java world.
+     * <li>Run javascript init function.
+     * </ul>
+     */
+    private static class WebEngineChangeListener implements ChangeListener<State> {
+
+        private final WebEngine webEngine;
+
+        public WebEngineChangeListener(WebEngine webEngine) {
+            this.webEngine = webEngine;
+        }
+
+        @Override
+        public void changed(ObservableValue<? extends State> p, State oldState, State newState) {
+            if (newState == Worker.State.SUCCEEDED) {
+                JSObject win = (JSObject) webEngine.executeScript("window");
+                win.setMember("javaObj", new Bridge());
+                webEngine.executeScript("init()");
+            }
         }
     }
 }
