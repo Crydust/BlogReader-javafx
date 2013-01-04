@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 public abstract class DateUtil {
 
     private static final Logger logger = Logger.getLogger(DateUtil.class.getName());
-    private static final SimpleDateFormat RFC822_DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
     private static final Map<String, TimeZone> TIME_ZONES = new HashMap<>();
 
     private DateUtil() {
@@ -36,7 +35,8 @@ public abstract class DateUtil {
     public static Date parseDateRfc822(final String s) {
         Date date = null;
         try {
-            date = RFC822_DATE_FORMAT.parse(s);
+            SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
+            date = format.parse(s);
         } catch (ParseException ex) {
             logger.log(Level.SEVERE, null, ex);
         }

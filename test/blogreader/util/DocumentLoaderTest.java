@@ -4,13 +4,8 @@
  */
 package blogreader.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.w3c.dom.Document;
@@ -20,25 +15,6 @@ import org.w3c.dom.Document;
  * @author kristof
  */
 public class DocumentLoaderTest {
-
-    public DocumentLoaderTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of loadDocument method, of class DocumentLoader.

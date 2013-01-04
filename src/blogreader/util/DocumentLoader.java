@@ -1,10 +1,8 @@
 package blogreader.util;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
@@ -59,6 +57,12 @@ public abstract class DocumentLoader {
         return doc;
     }
 
+    /**
+     * Synchronously loads XML Document from an InputStream.
+     * 
+     * @param in
+     * @return 
+     */
     @Nullable
     public static Document loadDocument(@Nonnull final InputStream in) {
         assert in != null;

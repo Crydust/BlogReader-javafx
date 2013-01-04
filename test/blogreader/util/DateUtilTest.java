@@ -6,10 +6,6 @@ package blogreader.util;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -18,42 +14,18 @@ import static org.junit.Assert.*;
  * @author kristof
  */
 public class DateUtilTest {
-    
-    public DateUtilTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of parseDateRfc822 method, of class DateUtil.
      */
     @Test
     public void testParseDateRfc822() {
-        String s = "";
-        Date expResult = null;
-        Date result = DateUtil.parseDateRfc822(s);
-        assertEquals(expResult, result);
-        
-        s = "Wed, 02 Oct 2002 15:00:00 +0200";
-        expResult = DateUtil.createDate(
+        String s = "Wed, 02 Oct 2002 15:00:00 +0200";
+        Date expResult = DateUtil.createDate(
                 2002, GregorianCalendar.OCTOBER, 2, 
                 15, 0, 0, 0,
                 "GMT+02:00");
-        result = DateUtil.parseDateRfc822(s);
+        Date result = DateUtil.parseDateRfc822(s);
         assertEquals(expResult, result);
         assertEquals(expResult.getTime(), result.getTime());
         
