@@ -49,11 +49,31 @@ public class Controller implements Initializable {
     private static final String DATE_FORMAT = "dd/MM/yyyy";
     private static final String TITLE_PROPERTY_NAME = "title";
     private static final String WEBVIEW_TEMPLATE = ""
+            + "<!DOCTYPE html>%n"
+            + "<html>%n"
+            + "<head>%n"
             + "<style>%n"
             + "body {%n"
+            + "    font-size: 14px;%n"
             + "    font-family: Arial, Helvetica, sans-serif;%n"
-            + "    font-size: 13px;%n"
             + "    line-height: 1.4;%n"
+            + "    background: #fff;%n"
+            + "    color: #4c4c4c;%n"
+            + "}%n"
+            + "a {%n"
+            + "    color: #105cb6;%n"
+            + "    text-decoration: underline;%n"
+            + "}%n"
+            + "pre, code, tt {%n"
+            + "    font-size: 14px;%n"
+            + "    font-family: Consolas, 'andale mono', 'lucida console', monospace;%n"
+            + "    line-height: 1.5;"
+            + "}%n"
+            + "%n"
+            + "pre {%n"
+            + "    border-left: 1px dotted #a8a8a8;%n"
+            + "    padding-left: 1.5em;%n"
+            + "    white-space : pre;%n"
             + "}%n"
             + "</style>%n"
             + "<script>%n"
@@ -69,7 +89,11 @@ public class Controller implements Initializable {
             + "    }%n"
             + "}%n"
             + "</script>"
-            + "%s";
+            + "</head>%n"
+            + "<body>%n"
+            + "%s"
+            + "</body>"
+            + "</html>";
     @FXML
     private Label titleLabel;
     @FXML
@@ -92,12 +116,12 @@ public class Controller implements Initializable {
         // * add selection listener
         TableColumn titleColumn = new TableColumn();
         titleColumn.setText(TITLE_COLUMN_TEXT);
-        titleColumn.setPrefWidth(400);
+        titleColumn.prefWidthProperty().bind(itemsTableView.widthProperty().subtract(200));
         titleColumn.setCellValueFactory(new PropertyValueFactory<FeedItem, String>(TITLE_PROPERTY_NAME));
 
         TableColumn pubDateColumn = new TableColumn();
         pubDateColumn.setText(DATE_COLUMN_TEXT);
-        pubDateColumn.setPrefWidth(200);
+        pubDateColumn.setPrefWidth(180);
         pubDateColumn.setCellValueFactory(new PubDateValueFactory());
 
         itemsTableView.getColumns().add(titleColumn);
@@ -105,6 +129,8 @@ public class Controller implements Initializable {
         itemsTableView.itemsProperty().bind(model.itemsProperty());
         itemsTableView.getSelectionModel().selectedItemProperty()
                 .addListener(new SelectionChangeListener(itemWebView));
+        
+        
 
         // initialize webview
         // * disable the contextmenu

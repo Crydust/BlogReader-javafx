@@ -1,5 +1,8 @@
 package blogreader.util;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
@@ -26,10 +29,10 @@ public abstract class XPathUtil {
 
     /**
      * Retrieves a string based on an XPath expression.
-     * 
+     *
      * @param node
      * @param expression
-     * @return 
+     * @return
      */
     @Nullable
     public static String readString(@Nullable final Node node, @Nonnull final String expression) {
@@ -45,10 +48,10 @@ public abstract class XPathUtil {
 
     /**
      * Retrieves a NodeList based on an XPath expression.
-     * 
+     *
      * @param node
      * @param expression
-     * @return 
+     * @return
      */
     @Nullable
     public static NodeList readNodeList(@Nullable final Node node, @Nonnull final String expression) {
@@ -62,14 +65,20 @@ public abstract class XPathUtil {
         return result;
     }
 
+    private static XPathExpression createXPathExpression(final String expression) throws XPathExpressionException {
+        assert expression != null;
+        XPathFactory xFactory = XPathFactory.newInstance();
+        XPath xpath = xFactory.newXPath();
+        XPathExpression expr = xpath.compile(expression);
+        return expr;
+    }
+
     @Nullable
     private static Object readObject(@Nullable final Node node, @Nonnull final QName qname, @Nonnull final String expression) {
         Object result = null;
         if (node != null) {
             try {
-                XPathFactory xFactory = XPathFactory.newInstance();
-                XPath xpath = xFactory.newXPath();
-                XPathExpression expr = xpath.compile(expression);
+                XPathExpression expr = createXPathExpression(expression);
                 result = expr.evaluate(node, qname);
             } catch (XPathExpressionException ex) {
                 logger.log(Level.SEVERE, null, ex);
@@ -79,5 +88,4 @@ public abstract class XPathUtil {
         }
         return result;
     }
-    
 }

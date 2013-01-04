@@ -2,6 +2,7 @@ package blogreader.util;
 
 import blogreader.model.FeedItem;
 import static blogreader.util.DateUtil.*;
+import static blogreader.util.ObjectUtil.*;
 import static blogreader.util.XPathUtil.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,8 +26,9 @@ public abstract class FeedParser {
 
     /**
      * reads the RSS feed title or returns null when that fails.
+     *
      * @param node
-     * @return 
+     * @return
      */
     @Nullable
     public static String readTitle(@Nonnull final Node node) {
@@ -35,8 +37,9 @@ public abstract class FeedParser {
 
     /**
      * reads the RSS feed items or returns null when that fails.
+     *
      * @param node
-     * @return 
+     * @return
      */
     @Nullable
     public static List<FeedItem> readItems(@Nonnull final Node node) {
@@ -50,7 +53,7 @@ public abstract class FeedParser {
                         readString(itemNode, "./title/text()"),
                         parseDateRfc822(readString(itemNode, "./pubDate/text()")),
                         readString(itemNode, "./link/text()"),
-                        readString(itemNode, "./description/text()"));
+                        firstNonNull(readString(itemNode, "./encoded/text()"), readString(itemNode, "./description/text()")));
                 items.add(item);
             }
             return Collections.unmodifiableList(items);
