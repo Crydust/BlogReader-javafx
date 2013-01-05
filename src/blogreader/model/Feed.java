@@ -17,32 +17,27 @@ public class Feed {
     private final ObservableList<FeedItem> itemsList;
     private final ListProperty<FeedItem> items;
 
+    /**
+     * 
+     */
     public Feed() {
         title = new SimpleStringProperty("Loading ...");
         itemsList = FXCollections.observableArrayList();
         items = new SimpleListProperty<>(this, "items", itemsList);
     }
 
-    public String getTitle() {
-        return title.get();
-    }
-
-    public void setTitle(String value) {
-        title.set(value);
-    }
-
+    /**
+     * 
+     * @return 
+     */
     public StringProperty titleProperty() {
         return title;
     }
 
-    public ObservableList getItems() {
-        return items.get();
-    }
-
-    public void setItems(ObservableList value) {
-        items.set(value);
-    }
-
+    /**
+     * 
+     * @return 
+     */
     public ListProperty itemsProperty() {
         return items;
     }
