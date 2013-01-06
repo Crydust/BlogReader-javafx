@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -36,6 +34,9 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
+import javax.annotation.Nonnull;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.w3c.dom.Document;
 
 /**
@@ -49,7 +50,7 @@ public class Controller implements Initializable {
     private static final String VIEW_SOURCE_URL = "https://github.com/Crydust/BlogReader-javafx";
     private static final String TITLE_COLUMN_TEXT = "Title";
     private static final String DATE_COLUMN_TEXT = "Date";
-    private static final String DATE_FORMAT = "dd/MM/yyyy";
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern("dd/MM/yyyy");
     private static final String TITLE_PROPERTY_NAME = "title";
     private static final String WEBVIEW_TEMPLATE = ""
             + "<!DOCTYPE html>%n"
@@ -150,12 +151,7 @@ public class Controller implements Initializable {
 
         // fetch data in the background
         logger.log(Level.INFO, "Begin loading feed");
-        Task<Document> getFeedDocument = new Task<Document>() {
-            @Override
-            protected Document call() throws Exception {
-                return DocumentLoader.loadDocument(FEED_URL);
-            }
-        };
+        Task<Document> getFeedDocument = new LoadDocumentTask(FEED_URL);
         getFeedDocument.valueProperty().addListener(new ChangeListener<Document>() {
             @Override
             public void changed(ObservableValue<? extends Document> ov, Document t, Document t1) {
@@ -274,8 +270,7 @@ public class Controller implements Initializable {
 
         @Override
         public ObservableValue<String> call(CellDataFeatures<FeedItem, String> p) {
-            DateFormat df = new SimpleDateFormat(DATE_FORMAT);
-            return new SimpleStringProperty(df.format(p.getValue().getPubDate()));
+            return new SimpleStringProperty(DATE_FORMAT.print(p.getValue().getPubDate()));
         }
     }
 
@@ -300,6 +295,20 @@ public class Controller implements Initializable {
                 win.setMember("javaObj", new Bridge());
                 webEngine.executeScript("init()");
             }
+        }
+    }
+    
+    private static class LoadDocumentTask extends Task<Document> {
+
+        private final String url;
+        
+        public LoadDocumentTask(@Nonnull final String url) {
+            this.url = url;
+        }
+        
+        @Override
+        protected Document call() throws Exception {
+            return DocumentLoader.loadDocument(url);
         }
     }
 }
