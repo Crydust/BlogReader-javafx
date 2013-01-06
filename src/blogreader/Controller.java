@@ -10,13 +10,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -29,11 +28,15 @@ import javafx.scene.control.Label;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.concurrent.Worker.State;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
+import javax.annotation.Nonnull;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.w3c.dom.Document;
 
 /**
@@ -44,9 +47,10 @@ public class Controller implements Initializable {
 
     private static final Logger logger = Logger.getLogger(Controller.class.getName());
     private static final String FEED_URL = "http://www.crydust.be/blog/feed/";
+    private static final String VIEW_SOURCE_URL = "https://github.com/Crydust/BlogReader-javafx";
     private static final String TITLE_COLUMN_TEXT = "Title";
     private static final String DATE_COLUMN_TEXT = "Date";
-    private static final String DATE_FORMAT = "dd/MM/yyyy";
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern("dd/MM/yyyy");
     private static final String TITLE_PROPERTY_NAME = "title";
     private static final String WEBVIEW_TEMPLATE = ""
             + "<!DOCTYPE html>%n"
@@ -97,9 +101,12 @@ public class Controller implements Initializable {
     @FXML
     private Label titleLabel;
     @FXML
+    private ProgressIndicator progressIndicator;
+    @FXML
     private TableView<FeedItem> itemsTableView;
     @FXML
     private WebView itemWebView;
+    private final SimpleBooleanProperty isLoading = new SimpleBooleanProperty(true);
     private final Feed model = new Feed();
 
     @Override
@@ -109,6 +116,8 @@ public class Controller implements Initializable {
 
         // initialize label
         titleLabel.textProperty().bind(model.titleProperty());
+
+        progressIndicator.visibleProperty().bind(isLoading);
 
         // initialize table
         // * add two columns
@@ -129,8 +138,8 @@ public class Controller implements Initializable {
         itemsTableView.itemsProperty().bind(model.itemsProperty());
         itemsTableView.getSelectionModel().selectedItemProperty()
                 .addListener(new SelectionChangeListener(itemWebView));
-        
-        
+
+
 
         // initialize webview
         // * disable the contextmenu
@@ -142,17 +151,12 @@ public class Controller implements Initializable {
 
         // fetch data in the background
         logger.log(Level.INFO, "Begin loading feed");
-        new Thread(new Task<Document>() {
+        Task<Document> getFeedDocument = new LoadDocumentTask(FEED_URL);
+        getFeedDocument.valueProperty().addListener(new ChangeListener<Document>() {
             @Override
-            protected Document call() throws Exception {
-                return DocumentLoader.loadDocument(FEED_URL);
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
+            public void changed(ObservableValue<? extends Document> ov, Document t, Document t1) {
                 model.itemsProperty().clear();
-                Document doc = this.getValue();
+                Document doc = t1;
                 if (doc != null) {
                     final String title = FeedParser.readTitle(doc);
                     final List<FeedItem> items = FeedParser.readItems(doc);
@@ -169,8 +173,10 @@ public class Controller implements Initializable {
                     logger.log(Level.SEVERE, "Error loading feed");
                     model.titleProperty().set("Error loading feed");
                 }
+                isLoading.set(false);
             }
-        }).start();
+        });
+        new Thread(getFeedDocument).start();
 
     }
 
@@ -201,6 +207,16 @@ public class Controller implements Initializable {
     @FXML
     void onLinkButtonClick(ActionEvent event) {
         browse(itemsTableView.getSelectionModel().selectedItemProperty().get().getLink());
+    }
+    
+    /**
+     * Event handler for the context menu.<br />Loads the view source link in a browser.
+     *
+     * @param event
+     */
+    @FXML
+    void onViewSourceClick(ActionEvent event) {
+        browse(VIEW_SOURCE_URL);
     }
 
     /**
@@ -244,7 +260,6 @@ public class Controller implements Initializable {
         }
     }
 
-
     /**
      * Retrieves and formats the pubDate.
      */
@@ -255,18 +270,15 @@ public class Controller implements Initializable {
 
         @Override
         public ObservableValue<String> call(CellDataFeatures<FeedItem, String> p) {
-            DateFormat df = new SimpleDateFormat(DATE_FORMAT);
-            return new SimpleStringProperty(df.format(p.getValue().getPubDate()));
+            return new SimpleStringProperty(DATE_FORMAT.print(p.getValue().getPubDate()));
         }
     }
 
     /**
      * Listens to changes in webengine state and each time a page is loaded:
-     * 
-     * <ul>
-     * <li>Add a bridge from the javascript to the java world.
-     * <li>Run javascript init function.
-     * </ul>
+     *
+     * <ul> <li>Add a bridge from the javascript to the java world.</li> <li>Run
+     * javascript init function.</li> </ul>
      */
     private static class WebEngineChangeListener implements ChangeListener<State> {
 
@@ -283,6 +295,20 @@ public class Controller implements Initializable {
                 win.setMember("javaObj", new Bridge());
                 webEngine.executeScript("init()");
             }
+        }
+    }
+    
+    private static class LoadDocumentTask extends Task<Document> {
+
+        private final String url;
+        
+        public LoadDocumentTask(@Nonnull final String url) {
+            this.url = url;
+        }
+        
+        @Override
+        protected Document call() throws Exception {
+            return DocumentLoader.loadDocument(url);
         }
     }
 }

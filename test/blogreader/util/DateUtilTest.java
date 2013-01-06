@@ -4,8 +4,9 @@
  */
 package blogreader.util;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
+import org.joda.time.DateTimeConstants;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -21,24 +22,33 @@ public class DateUtilTest {
     @Test
     public void testParseDateRfc822() {
         String s = "Wed, 02 Oct 2002 15:00:00 +0200";
-        Date expResult = DateUtil.createDate(
-                2002, GregorianCalendar.OCTOBER, 2, 
+        DateTime expResult = DateUtil.createDate(
+                2002, DateTimeConstants.OCTOBER, 2, 
                 15, 0, 0, 0,
-                "GMT+02:00");
-        Date result = DateUtil.parseDateRfc822(s);
-        assertEquals(expResult, result);
-        assertEquals(expResult.getTime(), result.getTime());
+                "+02:00");
+        DateTime result = DateUtil.parseDateRfc822(s);
+        assertNotNull(result);
+        if (result != null) {
+            assertEquals(expResult.getMillis(), result.getMillis());
+        }
+        //assertEquals(expResult, result);
+        //assertTrue(expResult.equals(result));
+        assertEquals(0, DateTimeComparator.getInstance().compare(expResult, result));
         
         s = "Tue, 24 Feb 2009 08:30:36 +0000";
         expResult = DateUtil.createDate(
-                2009, GregorianCalendar.FEBRUARY, 24, 
+                2009, DateTimeConstants.FEBRUARY, 24, 
                 8, 30, 36, 0,
-                "GMT+00:00");
+                "+00:00");
         result = DateUtil.parseDateRfc822(s);
-        assertEquals(expResult, result);
-        assertEquals(expResult.getTime(), result.getTime());
+        assertNotNull(result);
+        if (result != null) {
+            assertEquals(expResult.getMillis(), result.getMillis());
+        }
+        //assertEquals(expResult, result);
+        //assertTrue(expResult.equals(result));
+        assertEquals(0, DateTimeComparator.getInstance().compare(expResult, result));
     }
-    
     
     /**
      * Test of createDate method, of class DateUtil.
@@ -46,24 +56,34 @@ public class DateUtilTest {
     @Test
     public void testCreateDate() {
         for (int year = 1900; year < 2100; year++) {
-            for (int month = 0; month < 12; month++) {
+            for (int month = 1; month < 13; month++) {
                 for (int day = 1; day < 32; day++) {
-                    if (month == 1 && day == 29 && !DateUtil.isLeapYear(year)) {
+                    if (month == 2 && day == 29 && !isLeapYear(year)) {
                         break;
-                    } else if(month == 1 && day > 28) {
+                    } else if(month == 2 && day > 28) {
                         break;
-                    } else if ((month == 3 || month == 5 || month == 8 || month == 10) && day > 30) {
+                    } else if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
                         break;
                     }
                     //System.out.format("%s %s %s%n", year, month, day);
                     DateUtil.createDate(
                             year, month, day, 
                             0, 0, 0, 0,
-                            "GMT+00:00");
+                            "+00:00");
                 }
             }
         }
     }
     
+    private static boolean isLeapYear(int year) {
+        if (year >= 1583) {
+            // gregorian
+            return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+        }
+        else {
+            // julian
+            return year % 4 == 0;
+        }
+    }
     
 }
