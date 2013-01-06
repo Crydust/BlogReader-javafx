@@ -46,6 +46,7 @@ public class Controller implements Initializable {
 
     private static final Logger logger = Logger.getLogger(Controller.class.getName());
     private static final String FEED_URL = "http://www.crydust.be/blog/feed/";
+    private static final String VIEW_SOURCE_URL = "https://github.com/Crydust/BlogReader-javafx";
     private static final String TITLE_COLUMN_TEXT = "Title";
     private static final String DATE_COLUMN_TEXT = "Date";
     private static final String DATE_FORMAT = "dd/MM/yyyy";
@@ -210,6 +211,16 @@ public class Controller implements Initializable {
     @FXML
     void onLinkButtonClick(ActionEvent event) {
         browse(itemsTableView.getSelectionModel().selectedItemProperty().get().getLink());
+    }
+    
+    /**
+     * Event handler for the context menu.<br />Loads the view source link in a browser.
+     *
+     * @param event
+     */
+    @FXML
+    void onViewSourceClick(ActionEvent event) {
+        browse(VIEW_SOURCE_URL);
     }
 
     /**

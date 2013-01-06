@@ -4,9 +4,9 @@
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.*?>
-<?import javafx.scene.control.cell.*?>
 
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="blogreader.Controller"
       prefWidth="600" prefHeight="480" stylesheets="/blogreader/style.css">
@@ -14,21 +14,29 @@
         <AnchorPane>
             <children>
                 <Label AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                       fx:id="titleLabel" styleClass="big" />
-                <ProgressIndicator AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" 
-                                   fx:id="progressIndicator" visible="false" progress="-1.0" />
+                       fx:id="titleLabel" styleClass="big">
+                    <contextMenu>
+                        <ContextMenu fx:id="contextMenu">
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#onViewSourceClick" text="View Source" />
+                            </items>
+                        </ContextMenu>
+                    </contextMenu>
+                </Label>
+                <ProgressIndicator AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+                                   fx:id="progressIndicator" visible="false" progress="-1.0" contextMenu="$contextMenu" />
             </children>
         </AnchorPane>
         <SplitPane orientation="VERTICAL">
             <items>
-                <TableView fx:id="itemsTableView" />
+                <TableView fx:id="itemsTableView" contextMenu="$contextMenu" />
                 <WebView fx:id="itemWebView" />
             </items>
         </SplitPane>
         <AnchorPane>
             <children>
                 <Button AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"    
-                        fx:id="linkButton" styleClass="big" text="Read Full Post" onAction="#onLinkButtonClick" />
+                        fx:id="linkButton" styleClass="big" text="Read Full Post" onAction="#onLinkButtonClick" contextMenu="$contextMenu" />
             </children>
         </AnchorPane>
     </children>
