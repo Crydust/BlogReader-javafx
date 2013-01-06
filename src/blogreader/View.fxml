@@ -8,12 +8,21 @@
 <?import javafx.scene.web.*?>
 <?import javafx.scene.control.cell.*?>
 
-<VBox prefWidth="600" xmlns:fx="http://javafx.com/fxml" fx:controller="blogreader.Controller"
-stylesheets="/blogreader/style.css">
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="blogreader.Controller"
+      prefWidth="600" prefHeight="480" stylesheets="/blogreader/style.css">
     <children>
-        <Label fx:id="titleLabel" />
-        <TableView fx:id="itemsTableView" prefHeight="200" />
-        <WebView fx:id="itemWebView" prefHeight="200" />
-        <Button fx:id="linkButton" text="Read Full Post" onAction="#onLinkButtonClick" />
+        <Label fx:id="titleLabel" styleClass="big" />
+        <SplitPane orientation="VERTICAL">
+            <items>
+                <TableView fx:id="itemsTableView" />
+                <WebView fx:id="itemWebView" />
+            </items>
+        </SplitPane>
+        <AnchorPane>
+            <children>
+                <Button AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"    
+                        fx:id="linkButton" styleClass="big" text="Read Full Post" onAction="#onLinkButtonClick" />
+            </children>
+        </AnchorPane>
     </children>
 </VBox>
