@@ -1,6 +1,6 @@
 package blogreader.model;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -9,7 +9,7 @@ import java.util.Date;
 public class FeedItem {
 
     private final String title;
-    private final Date pubDate;
+    private final DateTime pubDate;
     private final String link;
     private final String description;
 
@@ -20,9 +20,9 @@ public class FeedItem {
      * @param link
      * @param description 
      */
-    public FeedItem(final String title, final Date pubDate, final String link, final String description) {
+    public FeedItem(final String title, final DateTime pubDate, final String link, final String description) {
         this.title = title;
-        this.pubDate = (Date) pubDate.clone();
+        this.pubDate = new DateTime(pubDate);
         this.link = link;
         this.description = description;
     }
@@ -39,8 +39,8 @@ public class FeedItem {
      * 
      * @return 
      */
-    public Date getPubDate() {
-        return (Date) pubDate.clone();
+    public DateTime getPubDate() {
+        return new DateTime(pubDate);
     }
 
     /**
