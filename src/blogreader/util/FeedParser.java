@@ -2,8 +2,8 @@ package blogreader.util;
 
 import blogreader.model.FeedItem;
 import static blogreader.util.DateUtil.*;
-import static blogreader.util.ObjectUtil.*;
 import static blogreader.util.XPathUtil.*;
+import static com.google.common.base.Objects.firstNonNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
