@@ -1,0 +1,18 @@
+# netbeans specific
+nbproject/private/
+nbproject/configs/
+build/
+nbbuild/
+#dist/
+nbdist/
+
+_notes/
+playground/
+tmp/
+temp/
+*~
+*.bak
+*.old
+*.orig
+*.rej
+*.swp
