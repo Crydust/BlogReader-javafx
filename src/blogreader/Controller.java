@@ -17,6 +17,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -29,6 +30,7 @@ import javafx.scene.control.Label;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.concurrent.Worker.State;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
@@ -97,9 +99,12 @@ public class Controller implements Initializable {
     @FXML
     private Label titleLabel;
     @FXML
+    private ProgressIndicator progressIndicator;
+    @FXML
     private TableView<FeedItem> itemsTableView;
     @FXML
     private WebView itemWebView;
+    private final SimpleBooleanProperty isLoading = new SimpleBooleanProperty(true);
     private final Feed model = new Feed();
 
     @Override
@@ -109,6 +114,8 @@ public class Controller implements Initializable {
 
         // initialize label
         titleLabel.textProperty().bind(model.titleProperty());
+
+        progressIndicator.visibleProperty().bind(isLoading);
 
         // initialize table
         // * add two columns
@@ -129,8 +136,8 @@ public class Controller implements Initializable {
         itemsTableView.itemsProperty().bind(model.itemsProperty());
         itemsTableView.getSelectionModel().selectedItemProperty()
                 .addListener(new SelectionChangeListener(itemWebView));
-        
-        
+
+
 
         // initialize webview
         // * disable the contextmenu
@@ -142,17 +149,17 @@ public class Controller implements Initializable {
 
         // fetch data in the background
         logger.log(Level.INFO, "Begin loading feed");
-        new Thread(new Task<Document>() {
+        Task<Document> getFeedDocument = new Task<Document>() {
             @Override
             protected Document call() throws Exception {
                 return DocumentLoader.loadDocument(FEED_URL);
             }
-
+        };
+        getFeedDocument.valueProperty().addListener(new ChangeListener<Document>() {
             @Override
-            protected void succeeded() {
-                super.succeeded();
+            public void changed(ObservableValue<? extends Document> ov, Document t, Document t1) {
                 model.itemsProperty().clear();
-                Document doc = this.getValue();
+                Document doc = t1;
                 if (doc != null) {
                     final String title = FeedParser.readTitle(doc);
                     final List<FeedItem> items = FeedParser.readItems(doc);
@@ -169,8 +176,10 @@ public class Controller implements Initializable {
                     logger.log(Level.SEVERE, "Error loading feed");
                     model.titleProperty().set("Error loading feed");
                 }
+                isLoading.set(false);
             }
-        }).start();
+        });
+        new Thread(getFeedDocument).start();
 
     }
 
@@ -244,7 +253,6 @@ public class Controller implements Initializable {
         }
     }
 
-
     /**
      * Retrieves and formats the pubDate.
      */
@@ -262,11 +270,9 @@ public class Controller implements Initializable {
 
     /**
      * Listens to changes in webengine state and each time a page is loaded:
-     * 
-     * <ul>
-     * <li>Add a bridge from the javascript to the java world.
-     * <li>Run javascript init function.
-     * </ul>
+     *
+     * <ul> <li>Add a bridge from the javascript to the java world.</li> <li>Run
+     * javascript init function.</li> </ul>
      */
     private static class WebEngineChangeListener implements ChangeListener<State> {
 

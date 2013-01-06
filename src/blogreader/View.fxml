@@ -11,7 +11,14 @@
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="blogreader.Controller"
       prefWidth="600" prefHeight="480" stylesheets="/blogreader/style.css">
     <children>
-        <Label fx:id="titleLabel" styleClass="big" />
+        <AnchorPane>
+            <children>
+                <Label AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                       fx:id="titleLabel" styleClass="big" />
+                <ProgressIndicator AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" 
+                                   fx:id="progressIndicator" visible="false" progress="-1.0" />
+            </children>
+        </AnchorPane>
         <SplitPane orientation="VERTICAL">
             <items>
                 <TableView fx:id="itemsTableView" />
