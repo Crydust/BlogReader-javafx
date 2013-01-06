@@ -11,7 +11,8 @@
   </resources>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="BlogReader.jar" size="40859" download="eager" />
+    <jar href="BlogReader.jar" size="48882" download="eager" />
+    <jar href="lib/joda-time-2.1.jar" size="641588" download="eager" />
     <jar href="lib/jsr305-2.0.1.jar" size="39607" download="eager" />
   </resources>
 <security>
