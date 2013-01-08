@@ -5,7 +5,6 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 /**
  *
@@ -14,7 +13,6 @@ import javafx.collections.ObservableList;
 public class Feed {
 
     private final StringProperty title;
-    private final ObservableList<FeedItem> itemsList;
     private final ListProperty<FeedItem> items;
 
     /**
@@ -22,8 +20,8 @@ public class Feed {
      */
     public Feed() {
         title = new SimpleStringProperty("Loading ...");
-        itemsList = FXCollections.observableArrayList();
-        items = new SimpleListProperty<>(this, "items", itemsList);
+        items = new SimpleListProperty<>(this, "items",
+                FXCollections.<FeedItem>observableArrayList());
     }
 
     /**

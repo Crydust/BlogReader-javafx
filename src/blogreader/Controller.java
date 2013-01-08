@@ -16,7 +16,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
@@ -29,12 +28,14 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.concurrent.Worker.State;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 import javax.annotation.Nonnull;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.w3c.dom.Document;
@@ -52,6 +53,7 @@ public class Controller implements Initializable {
     private static final String DATE_COLUMN_TEXT = "Date";
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormat.forPattern("dd/MM/yyyy");
     private static final String TITLE_PROPERTY_NAME = "title";
+    private static final String PUBDATE_PROPERTY_NAME = "pubDate";
     private static final String WEBVIEW_TEMPLATE = ""
             + "<!DOCTYPE html>%n"
             + "<html>%n"
@@ -131,15 +133,15 @@ public class Controller implements Initializable {
         TableColumn pubDateColumn = new TableColumn();
         pubDateColumn.setText(DATE_COLUMN_TEXT);
         pubDateColumn.setPrefWidth(180);
-        pubDateColumn.setCellValueFactory(new PubDateValueFactory());
+        pubDateColumn.setCellValueFactory(new PropertyValueFactory<FeedItem, DateTime>(PUBDATE_PROPERTY_NAME));
+        pubDateColumn.setCellFactory(getDateTimeCellFactory(DATE_FORMAT));
+        pubDateColumn.setComparator(DateTimeComparator.getInstance());
 
         itemsTableView.getColumns().add(titleColumn);
         itemsTableView.getColumns().add(pubDateColumn);
         itemsTableView.itemsProperty().bind(model.itemsProperty());
         itemsTableView.getSelectionModel().selectedItemProperty()
                 .addListener(new SelectionChangeListener(itemWebView));
-
-
 
         // initialize webview
         // * disable the contextmenu
@@ -208,9 +210,10 @@ public class Controller implements Initializable {
     void onLinkButtonClick(ActionEvent event) {
         browse(itemsTableView.getSelectionModel().selectedItemProperty().get().getLink());
     }
-    
+
     /**
-     * Event handler for the context menu.<br />Loads the view source link in a browser.
+     * Event handler for the context menu.<br />Loads the view source link in a
+     * browser.
      *
      * @param event
      */
@@ -261,17 +264,20 @@ public class Controller implements Initializable {
     }
 
     /**
-     * Retrieves and formats the pubDate.
+     * Readonly CellFactory that formats a DateTime
      */
-    private static class PubDateValueFactory implements Callback<CellDataFeatures<FeedItem, String>, ObservableValue<String>> {
-
-        public PubDateValueFactory() {
-        }
-
-        @Override
-        public ObservableValue<String> call(CellDataFeatures<FeedItem, String> p) {
-            return new SimpleStringProperty(DATE_FORMAT.print(p.getValue().getPubDate()));
-        }
+    private static Callback<TableColumn<FeedItem, DateTime>, TableCell<FeedItem, DateTime>> getDateTimeCellFactory(final DateTimeFormatter formatter) {
+        return new Callback<TableColumn<FeedItem, DateTime>, TableCell<FeedItem, DateTime>>() {
+            @Override
+            public TableCell<FeedItem, DateTime> call(TableColumn<FeedItem, DateTime> param) {
+                return new TableCell<FeedItem, DateTime>() {
+                    @Override
+                    public void updateItem(final DateTime item, boolean empty) {
+                        setText(item == null ? "" : formatter.print(item));
+                    }
+                };
+            }
+        };
     }
 
     /**
@@ -297,15 +303,15 @@ public class Controller implements Initializable {
             }
         }
     }
-    
+
     private static class LoadDocumentTask extends Task<Document> {
 
         private final String url;
-        
+
         public LoadDocumentTask(@Nonnull final String url) {
             this.url = url;
         }
-        
+
         @Override
         protected Document call() throws Exception {
             return DocumentLoader.loadDocument(url);
