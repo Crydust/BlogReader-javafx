@@ -50,7 +50,7 @@ public abstract class DateUtil {
      *
      * @param year as in 1970, 2020, ...
      * @param month human month, use DateTimeConstants if unsure [1, 12]
-     * @param date day of the month [1, 31]
+     * @param dayOfMonth day of the month [1, 31]
      * @param hourOfDay hour of day as on a 24 hour clock [0, 23]
      * @param minute
      * @param second

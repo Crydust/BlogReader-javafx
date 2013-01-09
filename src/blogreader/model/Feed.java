@@ -15,27 +15,19 @@ public class Feed {
     private final StringProperty title;
     private final ListProperty<FeedItem> items;
 
-    /**
-     * 
-     */
+    /** */
     public Feed() {
         title = new SimpleStringProperty("Loading ...");
         items = new SimpleListProperty<>(this, "items",
                 FXCollections.<FeedItem>observableArrayList());
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     public StringProperty titleProperty() {
         return title;
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     public ListProperty itemsProperty() {
         return items;
     }

@@ -1,7 +1,7 @@
 package blogreader;
 
-import blogreader.model.FeedItem;
 import blogreader.model.Feed;
+import blogreader.model.FeedItem;
 import blogreader.util.DocumentLoader;
 import blogreader.util.FeedParser;
 import com.sun.webpane.webkit.JSObject;
@@ -20,18 +20,18 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
+import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import javafx.concurrent.Worker.State;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.util.Callback;
 import javax.annotation.Nonnull;
 import org.joda.time.DateTime;
@@ -105,12 +105,17 @@ public class Controller implements Initializable {
     @FXML
     private ProgressIndicator progressIndicator;
     @FXML
-    private TableView<FeedItem> itemsTableView;
+    /* private */ TableView<FeedItem> itemsTableView;
     @FXML
     private WebView itemWebView;
-    private final SimpleBooleanProperty isLoading = new SimpleBooleanProperty(true);
-    private final Feed model = new Feed();
+    /* private */ final SimpleBooleanProperty isLoading = new SimpleBooleanProperty(true);
+    /* private */ final Feed model = new Feed();
 
+    /**
+     * 
+     * @param url
+     * @param rb 
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -207,7 +212,7 @@ public class Controller implements Initializable {
      * @param event
      */
     @FXML
-    void onLinkButtonClick(ActionEvent event) {
+    /* private */ void onLinkButtonClick(ActionEvent event) {
         browse(itemsTableView.getSelectionModel().selectedItemProperty().get().getLink());
     }
 

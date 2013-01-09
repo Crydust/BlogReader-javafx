@@ -6,12 +6,9 @@ package blogreader.util;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
+import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -24,12 +21,19 @@ public class XPathUtilTest {
     
     private static Document doc;
     
+    /**
+     * 
+     */
     public XPathUtilTest() {
     }
     
+    /**
+     * 
+     * @throws UnsupportedEncodingException 
+     */
     @BeforeClass
     public static void setUpClass() throws UnsupportedEncodingException {
-        StringBuilder sb = new StringBuilder()
+        StringBuilder sb = new StringBuilder(64)
                 .append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
                 .append("<rss>")
                 .append("<channel>")
@@ -45,18 +49,6 @@ public class XPathUtilTest {
                 .append("</rss>");
          InputStream in = StringUtil.inputStreamFromString(sb.toString(), "UTF-8");
          doc = DocumentLoader.loadDocument(in);
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
     }
     
     /**

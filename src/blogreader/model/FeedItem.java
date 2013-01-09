@@ -27,42 +27,27 @@ public class FeedItem {
         this.description = description;
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     public String getTitle() {
         return title;
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     public DateTime getPubDate() {
         return new DateTime(pubDate);
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     public String getLink() {
         return link;
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     public String getDescription() {
         return description;
     }
 
-    /**
-     * 
-     * @return 
-     */
+    /** @return */
     @Override
     public String toString() {
         return "Item{" + "title=" + title + ", pubDate=" + pubDate + '}';
