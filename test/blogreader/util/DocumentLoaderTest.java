@@ -6,8 +6,8 @@ package blogreader.util;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 import org.w3c.dom.Document;
 
 /**
@@ -18,10 +18,12 @@ public class DocumentLoaderTest {
 
     /**
      * Test of loadDocument method, of class DocumentLoader.
+     *
+     * @throws UnsupportedEncodingException 
      */
     @Test
     public void testLoadDocument_InputStream() throws UnsupportedEncodingException {
-        StringBuilder sb = new StringBuilder()
+        StringBuilder sb = new StringBuilder(64)
                 .append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
                 .append("<rss>")
                 .append("<channel>")
