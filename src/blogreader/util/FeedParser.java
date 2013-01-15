@@ -4,12 +4,12 @@ import blogreader.model.FeedItem;
 import static blogreader.util.DateUtil.*;
 import static blogreader.util.ObjectUtil.*;
 import static blogreader.util.XPathUtil.*;
+import checkers.nullness.quals.NonNull;
+import checkers.nullness.quals.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -31,7 +31,7 @@ public abstract class FeedParser {
      * @return
      */
     @Nullable
-    public static String readTitle(@Nonnull final Node node) {
+    public static String readTitle(@NonNull final Node node) {
         return readString(node, "/rss/channel/title/text()");
     }
 
@@ -42,7 +42,7 @@ public abstract class FeedParser {
      * @return
      */
     @Nullable
-    public static List<FeedItem> readItems(@Nonnull final Node node) {
+    public static List<FeedItem> readItems(@NonNull final Node node) {
         NodeList itemNodes = readNodeList(node, "/rss/channel/item");
         if (itemNodes != null) {
             int leni = itemNodes.getLength();

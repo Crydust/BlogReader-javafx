@@ -1,6 +1,6 @@
 package blogreader.util;
 
-import javax.annotation.Nullable;
+import checkers.nullness.quals.Nullable;
 
 /**
  *

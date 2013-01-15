@@ -1,10 +1,10 @@
 package blogreader.util;
 
+import checkers.nullness.quals.NonNull;
+import checkers.nullness.quals.Nullable;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -59,8 +59,8 @@ public abstract class DateUtil {
      * be specified. The form [+-]hh:mm can be used.
      * @return
      */
-    @Nonnull
-    public static DateTime createDate(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second, int milliSecond, @Nonnull String timeZoneID) {
+    @NonNull
+    public static DateTime createDate(int year, int month, int dayOfMonth, int hourOfDay, int minute, int second, int milliSecond, @NonNull String timeZoneID) {
         assert month >= 1 && month <= 12;
         assert dayOfMonth >= 1 && dayOfMonth <= 31;
         assert dayOfMonth <= 29 || month != 2;

@@ -1,9 +1,9 @@
 package blogreader.util;
 
+import checkers.nullness.quals.NonNull;
+import checkers.nullness.quals.Nullable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -32,7 +32,7 @@ public abstract class XPathUtil {
      * @return
      */
     @Nullable
-    public static String readString(@Nullable final Node node, @Nonnull final String expression) {
+    public static String readString(@Nullable final Node node, @NonNull final String expression) {
         String result = null;
         Object object = readObject(node, XPathConstants.STRING, expression);
         if (object instanceof String) {
@@ -51,7 +51,7 @@ public abstract class XPathUtil {
      * @return
      */
     @Nullable
-    public static NodeList readNodeList(@Nullable final Node node, @Nonnull final String expression) {
+    public static NodeList readNodeList(@Nullable final Node node, @NonNull final String expression) {
         NodeList result = null;
         Object object = readObject(node, XPathConstants.NODESET, expression);
         if (object instanceof NodeList) {
@@ -71,7 +71,7 @@ public abstract class XPathUtil {
     }
 
     @Nullable
-    private static Object readObject(@Nullable final Node node, @Nonnull final QName qname, @Nonnull final String expression) {
+    private static Object readObject(@Nullable final Node node, @NonNull final QName qname, @NonNull final String expression) {
         Object result = null;
         if (node != null) {
             try {

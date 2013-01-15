@@ -1,5 +1,7 @@
 package blogreader.util;
 
+import checkers.nullness.quals.NonNull;
+import checkers.nullness.quals.Nullable;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,8 +9,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,7 +33,7 @@ public abstract class DocumentLoader {
      * @return
      */
     @Nullable
-    public static Document loadDocument(@Nonnull final String spec) {
+    public static Document loadDocument(@NonNull final String spec) {
         assert spec != null;
         Document doc = null;
         InputStream in = null;
@@ -64,7 +64,7 @@ public abstract class DocumentLoader {
      * @return 
      */
     @Nullable
-    public static Document loadDocument(@Nonnull final InputStream in) {
+    public static Document loadDocument(@NonNull final InputStream in) {
         assert in != null;
         Document doc = null;
         try {

@@ -4,6 +4,7 @@ import blogreader.model.Feed;
 import blogreader.model.FeedItem;
 import blogreader.util.DocumentLoader;
 import blogreader.util.FeedParser;
+import checkers.nullness.quals.NonNull;
 import com.sun.webpane.webkit.JSObject;
 import java.awt.Desktop;
 import java.io.IOException;
@@ -33,7 +34,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
-import javax.annotation.Nonnull;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
 import org.joda.time.format.DateTimeFormat;
@@ -313,7 +313,7 @@ public class Controller implements Initializable {
 
         private final String url;
 
-        public LoadDocumentTask(@Nonnull final String url) {
+        public LoadDocumentTask(@NonNull final String url) {
             this.url = url;
         }
 
