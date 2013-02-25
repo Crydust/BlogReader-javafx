@@ -4,7 +4,6 @@ import blogreader.model.Feed;
 import blogreader.model.FeedItem;
 import blogreader.util.DocumentLoader;
 import blogreader.util.FeedParser;
-import com.sun.webpane.webkit.JSObject;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
@@ -34,6 +33,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 import javax.annotation.Nonnull;
+import netscape.javascript.JSObject;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
 import org.joda.time.format.DateTimeFormat;
@@ -231,7 +231,7 @@ public class Controller implements Initializable {
      * Bridge class<br /> Allows the webview from loading urls in the default
      * browser
      */
-    private static class Bridge {
+    public static class Bridge {
 
         private static final Logger logger = Logger.getLogger(Bridge.class.getName());
 
@@ -263,8 +263,12 @@ public class Controller implements Initializable {
         @Override
         public void changed(ObservableValue<? extends FeedItem> observable,
                 FeedItem oldValue, FeedItem newValue) {
-            webView.getEngine().loadContent(String.format(WEBVIEW_TEMPLATE,
-                    newValue.getDescription()));
+            try {
+                webView.getEngine().loadContent(String.format(WEBVIEW_TEMPLATE,
+                        newValue.getDescription()));
+            } catch(NullPointerException e) {
+                logger.throwing("SelectionChangeListener", "changed", e);
+            }
         }
     }
 
@@ -302,9 +306,12 @@ public class Controller implements Initializable {
         @Override
         public void changed(ObservableValue<? extends State> p, State oldState, State newState) {
             if (newState == Worker.State.SUCCEEDED) {
-                JSObject win = (JSObject) webEngine.executeScript("window");
-                win.setMember("javaObj", new Bridge());
-                webEngine.executeScript("init()");
+                Object obj = webEngine.executeScript("window");
+                if (obj instanceof JSObject) {
+                    JSObject win = (JSObject) obj;
+                    win.setMember("javaObj", new Bridge());
+                    webEngine.executeScript("init()");
+                }
             }
         }
     }
